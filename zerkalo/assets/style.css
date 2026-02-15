@@ -522,3 +522,4 @@
       .percent{font-size:46px}
     }
     .no-scroll{overflow:hidden;}
+    body.drawer-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden;touch-action:none;}

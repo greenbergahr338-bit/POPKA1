@@ -31,19 +31,37 @@
 
     if (!burger || !drawer) return;
 
-    function open(){
-      burger.setAttribute('aria-expanded', 'true');
-      drawer.classList.add('open');
-      if (overlay) overlay.classList.add('open');
-      document.documentElement.classList.add('no-scroll');
-    }
-    function close(){
-      burger.setAttribute('aria-expanded', 'false');
-      drawer.classList.remove('open');
-      if (overlay) overlay.classList.remove('open');
-      document.documentElement.classList.remove('no-scroll');
-    }
-    function toggle(){
+    let _scrollY = 0;
+
+function lockScroll(){
+  // iOS Safari-friendly scroll lock:
+  _scrollY = window.scrollY || window.pageYOffset || 0;
+  document.body.dataset.scrollY = String(_scrollY);
+  document.body.classList.add('drawer-lock');
+  document.body.style.top = `-${_scrollY}px`;
+}
+
+function unlockScroll(){
+  const y = parseInt(document.body.dataset.scrollY || '0', 10) || 0;
+  document.body.classList.remove('drawer-lock');
+  document.body.style.top = '';
+  delete document.body.dataset.scrollY;
+  window.scrollTo(0, y);
+}
+
+function open(){
+  burger.setAttribute('aria-expanded', 'true');
+  drawer.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+  lockScroll();
+}
+function close(){
+  burger.setAttribute('aria-expanded', 'false');
+  drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+  unlockScroll();
+}
+function toggle(){
       if (drawer.classList.contains('open')) close();
       else open();
     }

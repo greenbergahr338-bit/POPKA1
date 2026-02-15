@@ -38,42 +38,68 @@
     syncBonusPercents();
 
     /* =========================
-       Mobile drawer
+       Mobile drawer (stable)
     ========================= */
-    const burger = document.getElementById('burger');
-    const drawer = document.getElementById('drawer');
-    const drawerOverlay = document.getElementById('drawerOverlay');
-    const closeBtn = document.getElementById('drawerClose');
-    const drawerLinks = Array.from(document.querySelectorAll('.drawer-link'));
+    (function(){
+      const burger = document.querySelector('.burger') || document.getElementById('burger');
+      const drawer = document.getElementById('drawer') || document.querySelector('.drawer');
+      const overlay = document.getElementById('drawerOverlay') || document.querySelector('.drawer-overlay');
+      const closeBtn = document.getElementById('drawerClose') || (drawer ? drawer.querySelector('.drawer-close') : null);
 
-    function openDrawer(){
-      burger.setAttribute('aria-expanded','true');
-      drawer.classList.add('open');
-      drawerOverlay.classList.add('open');
-      drawer.setAttribute('aria-hidden','false');
-      drawerOverlay.setAttribute('aria-hidden','false');
-      document.documentElement.classList.add('no-scroll');
-      document.body.classList.add('no-scroll');
-    }
-    function closeDrawer(){
-      burger.setAttribute('aria-expanded','false');
-      drawer.classList.remove('open');
-      drawerOverlay.classList.remove('open');
-      drawer.setAttribute('aria-hidden','true');
-      drawerOverlay.setAttribute('aria-hidden','true');
-      document.documentElement.classList.remove('no-scroll');
-      document.body.classList.remove('no-scroll');
-    }
-    burger.addEventListener('click', ()=>{
-      const expanded = burger.getAttribute('aria-expanded') === 'true';
-      expanded ? closeDrawer() : openDrawer();
-    });
-    closeBtn.addEventListener('click', closeDrawer);
-    drawerOverlay.addEventListener('click', closeDrawer);
-    drawerLinks.forEach(a => a.addEventListener('click', closeDrawer));
-    window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeDrawer(); });
+      if (!burger || !drawer) return;
 
-    /* =========================
+      let _scrollY = 0;
+
+      function lockScroll(){
+        _scrollY = window.scrollY || window.pageYOffset || 0;
+        document.body.dataset.scrollY = String(_scrollY);
+        document.body.classList.add('drawer-lock');
+        document.body.style.top = `-${_scrollY}px`;
+      }
+
+      function unlockScroll(){
+        const y = parseInt(document.body.dataset.scrollY || '0', 10) || 0;
+        document.body.classList.remove('drawer-lock');
+        document.body.style.top = '';
+        delete document.body.dataset.scrollY;
+        window.scrollTo(0, y);
+      }
+
+      function openDrawer(){
+        burger.setAttribute('aria-expanded','true');
+        drawer.classList.add('open');
+        if (overlay) overlay.classList.add('open');
+        drawer.setAttribute('aria-hidden','false');
+        if (overlay) overlay.setAttribute('aria-hidden','false');
+        lockScroll();
+      }
+
+      function closeDrawer(){
+        burger.setAttribute('aria-expanded','false');
+        drawer.classList.remove('open');
+        if (overlay) overlay.classList.remove('open');
+        drawer.setAttribute('aria-hidden','true');
+        if (overlay) overlay.setAttribute('aria-hidden','true');
+        unlockScroll();
+      }
+
+      function toggle(){
+        const expanded = burger.getAttribute('aria-expanded') === 'true';
+        expanded ? closeDrawer() : openDrawer();
+      }
+
+      burger.addEventListener('click', (e)=>{ e.preventDefault(); toggle(); });
+
+      if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      if (overlay) overlay.addEventListener('click', closeDrawer);
+
+      // Close when tapping any link inside drawer
+      drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeDrawer));
+
+      window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeDrawer(); });
+    })();
+
+/* =========================
        Games (3 категории)
     ========================= */
     const ASSETS = "images";
@@ -107,7 +133,7 @@
       const demoBtn = g.demoRef ? `<a class="btn btn-outline ref-link" href="#" data-ref="${g.demoRef}">Демо</a>` : '';
       return `
         <div class="game ${g.extra ? 'extra-slot' : ''}" style="${g.extra ? 'display:none' : ''}">
-          <div class="gimg"><img src="${g.img}" alt="${g.title}"></div>
+          <div class="gimg"><img src="${g.img}" alt="${g.title}" loading="lazy" decoding="async"></div>
           <div class="gbody">
             <p class="gt">${g.title}</p>
             <p class="gd">${g.text}</p>
@@ -213,17 +239,11 @@
 
       function open(){
         pop.classList.add("open");
-        pop.setAttribute("aria-hidden","false");
-        document.documentElement.classList.add("no-scroll");
-        document.body.classList.add("no-scroll");
-        localStorage.setItem(KEY,"1");
+        pop.setAttribute("aria-hidden","false");localStorage.setItem(KEY,"1");
       }
       function shut(){
         pop.classList.remove("open");
-        pop.setAttribute("aria-hidden","true");
-        document.documentElement.classList.remove("no-scroll");
-        document.body.classList.remove("no-scroll");
-      }
+        pop.setAttribute("aria-hidden","true");}
       close.addEventListener("click", shut);
       pop.addEventListener("click", (e)=>{ if(e.target===pop) shut(); });
       window.addEventListener("keydown", (e)=>{ if(e.key==="Escape" && pop.classList.contains("open")) shut(); });
@@ -257,9 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.getElementById('closePopup');
   if (!overlay) return;
   function close() {
-    overlay.classList.remove('open');
-    document.body.classList.remove('no-scroll');
-  }
+    overlay.classList.remove('open');}
   if (closeBtn) closeBtn.addEventListener('click', close);
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) close();

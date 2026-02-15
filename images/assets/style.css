@@ -92,10 +92,10 @@
     .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
     .burger[aria-expanded="true"] span:nth-child(3){transform:rotate(-45deg)}
 
-    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;z-index:9990;}
-    .drawer-overlay.open{display:block;}
+    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);display:block;opacity:0;pointer-events:none;z-index:9990;will-change:opacity;}
+    .drawer-overlay.open{opacity:1;pointer-events:auto;}
     .drawer{
-      position:fixed;top:0;right:0;width:min(360px,92vw);height:100vh;
+      position:fixed;top:0;right:0;width:min(360px,92vw);height:100vh;will-change:transform;
       background:rgba(31,31,35,.96);backdrop-filter: blur(10px);
       border-left:1px solid rgba(255,255,255,.06);
       box-shadow:-20px 0 60px rgba(0,0,0,.55);
@@ -528,5 +528,7 @@
       .percent{font-size:46px}
     }
     .no-scroll{overflow:hidden;}
+    body.drawer-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden;touch-action:none;}
+
 /* Show more slots */
 .game.is-hidden{display:none;}

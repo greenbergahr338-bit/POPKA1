@@ -45,24 +45,36 @@
     const drawerOverlay = document.getElementById('drawerOverlay');
     const closeBtn = document.getElementById('drawerClose');
     const drawerLinks = Array.from(document.querySelectorAll('.drawer-link'));
+    let _scrollY = 0;
+
+    function lockScroll(){
+      _scrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.dataset.scrollY = String(_scrollY);
+      document.body.classList.add('drawer-lock');
+      document.body.style.top = `-${_scrollY}px`;
+    }
+
+    function unlockScroll(){
+      const y = parseInt(document.body.dataset.scrollY || '0', 10) || 0;
+      document.body.classList.remove('drawer-lock');
+      document.body.style.top = '';
+      delete document.body.dataset.scrollY;
+      window.scrollTo(0, y);
+    }
 
     function openDrawer(){
       burger.setAttribute('aria-expanded','true');
       drawer.classList.add('open');
       drawerOverlay.classList.add('open');
       drawer.setAttribute('aria-hidden','false');
-      drawerOverlay.setAttribute('aria-hidden','false');
-      document.documentElement.classList.add('no-scroll');
-      document.body.classList.add('no-scroll');
-    }
+      drawerOverlay.setAttribute('aria-hidden','false');}
     function closeDrawer(){
       burger.setAttribute('aria-expanded','false');
       drawer.classList.remove('open');
       drawerOverlay.classList.remove('open');
       drawer.setAttribute('aria-hidden','true');
-      drawerOverlay.setAttribute('aria-hidden','true');
-      document.documentElement.classList.remove('no-scroll');
-      document.body.classList.remove('no-scroll');
+      drawerOverlay.setAttribute('aria-hidden','true');lockScroll();
+          unlockScroll();
     }
     burger.addEventListener('click', ()=>{
       const expanded = burger.getAttribute('aria-expanded') === 'true';
@@ -195,17 +207,11 @@
 
       function open(){
         pop.classList.add("open");
-        pop.setAttribute("aria-hidden","false");
-        document.documentElement.classList.add("no-scroll");
-        document.body.classList.add("no-scroll");
-        localStorage.setItem(KEY,"1");
+        pop.setAttribute("aria-hidden","false");localStorage.setItem(KEY,"1");
       }
       function shut(){
         pop.classList.remove("open");
-        pop.setAttribute("aria-hidden","true");
-        document.documentElement.classList.remove("no-scroll");
-        document.body.classList.remove("no-scroll");
-      }
+        pop.setAttribute("aria-hidden","true");}
       close.addEventListener("click", shut);
       pop.addEventListener("click", (e)=>{ if(e.target===pop) shut(); });
       window.addEventListener("keydown", (e)=>{ if(e.key==="Escape" && pop.classList.contains("open")) shut(); });
@@ -239,9 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.getElementById('closePopup');
   if (!overlay) return;
   function close() {
-    overlay.classList.remove('open');
-    document.body.classList.remove('no-scroll');
-  }
+    overlay.classList.remove('open');}
   if (closeBtn) closeBtn.addEventListener('click', close);
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) close();
