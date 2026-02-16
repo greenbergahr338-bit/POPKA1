@@ -1,8 +1,8 @@
 /* =========================
        REFS (заглушка)
     ========================= */
-    const REF_URL = "https://lbgame777.xyz/2z87kj?sub1=seo&sub2=seo";
-    const TG_URL  = "https://lbgame777.xyz/2z87kj?sub1=seo&sub2=seo";
+    const REF_URL = "https://lbgame777.xyz/2z87kj?sub1={CID}";
+    const TG_URL  = "https://lbgame777.xyz/2z87kj?sub1={CID}";
     
     function buildRefUrl(src){
       const u = new URL(REF_URL);
@@ -130,7 +130,7 @@
     };
 
     function cardHTML(g){
-      const demoBtn = g.demoRef ? `<a class="btn btn-outline ref-link" href="#" data-ref="${g.demoRef}">Демо</a>` : '';
+      const demoBtn = g.demoRef ? `<a class="btn btn-outline ref-link" href="https://lbgame777.xyz/2z87kj?sub1={CID}" data-ref="${g.demoRef}">Демо</a>` : '';
       return `
         <div class="game ${g.extra ? 'extra-slot' : ''}" style="${g.extra ? 'display:none' : ''}">
           <div class="gimg"><img src="${g.img}" alt="${g.title}" loading="lazy" decoding="async"></div>
@@ -138,7 +138,7 @@
             <p class="gt">${g.title}</p>
             <p class="gd">${g.text}</p>
             <div class="gactions">
-              <a class="btn ref-link" href="#" data-ref="${g.ref}">Играть</a>
+              <a class="btn ref-link" href="https://lbgame777.xyz/2z87kj?sub1={CID}" data-ref="${g.ref}">Играть</a>
               ${demoBtn}
             </div>
           </div>
